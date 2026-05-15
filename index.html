@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cotizador Tock Days 2026 — TockLock</title>
+<style>
+  :root {
+    --brand:       #007ad1;
+    --brand-dark:  #005fa3;
+    --brand-light: #e6f3fc;
+    --brand-mid:   #4fa8e0;
+    --gray-bg:     #F5F7FA;
+    --gray-card:   #FFFFFF;
+    --gray-border: #E2E6ED;
+    --gray-text:   #222831;
+    --gray-muted:  #7A8494;
+    --success:     #1D9E75;
+    --success-light:#E1F5EE;
+    --success-dark: #0F6E56;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; background: var(--gray-bg); color: var(--gray-text); min-height: 100vh; }
+
+  /* HEADER */
+  .site-header { background: #fff; border-bottom: 1px solid var(--gray-border); padding: 0 32px; display: flex; align-items: center; gap: 20px; height: 64px; }
+  .logo-wrap { height: 36px; display: flex; align-items: center; }
+  .logo-wrap svg { height: 36px; width: auto; }
+  .header-divider { width: 1px; height: 28px; background: var(--gray-border); }
+  .header-title { font-size: 14px; font-weight: 600; color: var(--gray-text); }
+  .header-badge { background: var(--brand); color: #fff; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; letter-spacing: .04em; }
+  .header-dates { color: var(--gray-muted); font-size: 12px; margin-left: auto; }
+
+  /* HERO STRIP */
+  .hero { background: var(--brand); padding: 20px 32px; display: flex; align-items: center; gap: 20px; }
+  .hero-text h2 { color: #fff; font-size: 20px; font-weight: 700; }
+  .hero-text p { color: rgba(255,255,255,0.75); font-size: 13px; margin-top: 3px; }
+  .hero-stats { display: flex; gap: 16px; margin-left: auto; }
+  .hero-stat { text-align: center; }
+  .hero-stat-val { font-size: 22px; font-weight: 700; color: #fff; }
+  .hero-stat-lbl { font-size: 10px; color: rgba(255,255,255,0.65); text-transform: uppercase; letter-spacing: .06em; }
+
+  /* MAIN */
+  .main { max-width: 1140px; margin: 0 auto; padding: 24px 16px 56px; }
+
+  /* SEARCH CARD */
+  .search-card { background: var(--gray-card); border: 1px solid var(--gray-border); border-radius: 14px; padding: 20px 24px; margin-bottom: 22px; box-shadow: 0 1px 4px rgba(0,0,0,.04); }
+  .search-card-head { font-size: 11px; font-weight: 700; color: var(--gray-muted); letter-spacing: .07em; text-transform: uppercase; margin-bottom: 12px; }
+  .search-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .search-row input { flex: 1; min-width: 220px; height: 44px; border: 1px solid var(--gray-border); border-radius: 10px; padding: 0 16px; font-size: 14px; background: var(--gray-bg); color: var(--gray-text); outline: none; transition: border .15s, box-shadow .15s; }
+  .search-row input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(0,122,209,.12); background: #fff; }
+  .search-row input::placeholder { color: var(--gray-muted); }
+  .search-row select { height: 44px; border: 1px solid var(--gray-border); border-radius: 10px; padding: 0 14px; font-size: 13px; background: var(--gray-bg); color: var(--gray-text); cursor: pointer; outline: none; }
+  .search-row select:focus { border-color: var(--brand); }
+  .result-count { font-size: 12px; color: var(--gray-muted); margin-left: auto; white-space: nowrap; }
+
+  /* PRODUCTS GRID */
+  .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 16px; margin-bottom: 28px; }
+
+  /* PRODUCT CARD */
+  .prod-card { background: var(--gray-card); border: 1px solid var(--gray-border); border-radius: 14px; padding: 20px; cursor: pointer; transition: border-color .15s, box-shadow .15s; box-shadow: 0 1px 4px rgba(0,0,0,.04); }
+  .prod-card:hover { border-color: var(--brand-mid); box-shadow: 0 4px 16px rgba(0,122,209,.1); }
+  .prod-card.active { border-color: var(--brand); border-width: 2px; box-shadow: 0 4px 20px rgba(0,122,209,.15); }
+
+  .prod-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; gap: 8px; }
+  .prod-name { font-size: 16px; font-weight: 700; color: var(--gray-text); line-height: 1.25; }
+  .prod-nivel-tag { font-size: 11px; color: var(--brand); font-weight: 600; margin-top: 3px; }
+  .cat-badge { font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; }
+  .cat-cerradura { background: var(--brand-light); color: var(--brand-dark); }
+  .cat-accesorio  { background: #F0EEE8; color: #5F5E5A; }
+
+  /* PRICE ROWS */
+  .precio-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--gray-border); }
+  .precio-row:last-of-type { border-bottom: none; }
+  .precio-label { font-size: 12px; color: var(--gray-muted); display: flex; align-items: center; gap: 6px; }
+  .precio-val { font-size: 13px; font-weight: 500; color: var(--gray-text); }
+  .precio-val.tachado { text-decoration: line-through; color: var(--gray-muted); font-weight: 400; font-size: 12px; }
+  .precio-val.tock { color: var(--brand); font-size: 15px; font-weight: 700; }
+  .precio-val.ahorro { color: var(--success); font-size: 13px; }
+
+  .disc-pill { display: inline-block; font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 20px; }
+  .d10{background:#EAF3DE;color:#3B6D11} .d15{background:#E1F5EE;color:#0F6E56}
+  .d20{background:#dbeeff;color:#005fa3} .d30{background:#EEEDFE;color:#3C3489}
+  .d35{background:#FAC775;color:#633806} .d40{background:#F5C4B3;color:#712B13}
+
+  /* INSTALACIÓN SECTION */
+  .ins-divider { border: none; border-top: 1px dashed var(--gray-border); margin: 12px 0 10px; }
+  .ins-section-label { font-size: 10px; font-weight: 700; color: var(--gray-muted); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 8px; }
+
+  /* TOTAL BOX */
+  .total-box { background: var(--brand); border-radius: 10px; padding: 14px 16px; margin-top: 12px; display: flex; justify-content: space-between; align-items: center; }
+  .total-left .total-label { font-size: 12px; font-weight: 700; color: rgba(255,255,255,.8); }
+  .total-left .total-ahorro { font-size: 11px; color: rgba(255,255,255,.65); margin-top: 2px; }
+  .total-price { font-size: 24px; font-weight: 800; color: #fff; }
+
+  /* NO RESULTS */
+  .empty { text-align: center; padding: 56px 16px; color: var(--gray-muted); grid-column: 1/-1; }
+  .empty svg { display: block; margin: 0 auto 14px; opacity: .35; }
+  .empty p { font-size: 14px; }
+
+  /* NIVELES REFERENCE */
+  .ref-section { background: var(--gray-card); border: 1px solid var(--gray-border); border-radius: 14px; padding: 20px 24px; box-shadow: 0 1px 4px rgba(0,0,0,.04); }
+  .ref-section-head { font-size: 11px; font-weight: 700; color: var(--gray-muted); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 16px; }
+  .niveles-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  .nivel-card { border: 1px solid var(--gray-border); border-radius: 12px; padding: 16px 12px; text-align: center; }
+  .nivel-name { font-size: 17px; font-weight: 800; color: var(--brand); margin-bottom: 2px; }
+  .nivel-desc { font-size: 10px; color: var(--gray-muted); margin-bottom: 8px; line-height: 1.3; }
+  .nivel-regular { font-size: 11px; color: var(--gray-muted); text-decoration: line-through; }
+  .nivel-promo { font-size: 19px; font-weight: 800; color: var(--brand-dark); }
+  .nivel-save { font-size: 10px; background: var(--brand-light); color: var(--brand-dark); border-radius: 20px; padding: 2px 9px; display: inline-block; margin-top: 5px; font-weight: 700; }
+
+  /* FOOTER */
+  .site-footer { text-align: center; padding: 20px 16px; font-size: 11px; color: var(--gray-muted); border-top: 1px solid var(--gray-border); margin-top: 32px; }
+
+  @media (max-width: 640px) {
+    .hero { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .hero-stats { margin-left: 0; }
+    .results-grid { grid-template-columns: 1fr; }
+    .niveles-grid { grid-template-columns: repeat(3, 1fr); }
+    .site-header { padding: 0 16px; }
+    .hero { padding: 16px; }
+    .search-row input { min-width: 100%; }
+    .header-title { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo-wrap">
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" zoomAndPan="magnify" viewBox="0 0 1024.5 354.749987" preserveAspectRatio="xMidYMid meet" version="1.0"><defs><clipPath id="5e31c79e10"><path d="M 0.109375 0 L 1023.890625 0 L 1023.890625 354.5 L 0.109375 354.5 Z M 0.109375 0 " clip-rule="nonzero"/></clipPath><clipPath id="47b3749b48"><path d="M 29.078125 134.105469 L 120.964844 134.105469 L 120.964844 240.546875 L 29.078125 240.546875 Z M 29.078125 134.105469 " clip-rule="nonzero"/></clipPath><clipPath id="e76f38a259"><path d="M 120.902344 150.636719 L 120.902344 137.488281 C 120.902344 135.847656 119.570312 134.515625 117.929688 134.515625 L 32.460938 134.515625 C 30.820312 134.515625 29.488281 135.847656 29.488281 137.488281 L 29.488281 150.636719 C 29.488281 152.277344 30.820312 153.609375 32.460938 153.609375 L 60.738281 153.609375 C 62.378906 153.609375 63.710938 154.941406 63.710938 156.582031 L 63.710938 237.230469 C 63.710938 238.871094 65.046875 240.203125 66.683594 240.203125 L 84.542969 240.203125 C 86.183594 240.203125 87.519531 238.871094 87.519531 237.230469 L 87.519531 156.582031 C 87.519531 154.941406 88.851562 153.609375 90.492188 153.609375 L 117.929688 153.609375 C 119.570312 153.609375 120.902344 152.277344 120.902344 150.636719 " clip-rule="nonzero"/></clipPath><clipPath id="32fcf81a39"><path d="M 0.371094 0.304688 L 91.964844 0.304688 L 91.964844 106.3125 L 0.371094 106.3125 Z M 0.371094 0.304688 " clip-rule="nonzero"/></clipPath><clipPath id="4f3841f4cd"><path d="M 91.902344 16.636719 L 91.902344 3.488281 C 91.902344 1.847656 90.570312 0.515625 88.929688 0.515625 L 3.460938 0.515625 C 1.820312 0.515625 0.488281 1.847656 0.488281 3.488281 L 0.488281 16.636719 C 0.488281 18.277344 1.820312 19.609375 3.460938 19.609375 L 31.738281 19.609375 C 33.378906 19.609375 34.710938 20.941406 34.710938 22.582031 L 34.710938 103.230469 C 34.710938 104.871094 36.046875 106.203125 37.683594 106.203125 L 55.542969 106.203125 C 57.183594 106.203125 58.519531 104.871094 58.519531 103.230469 L 58.519531 22.582031 C 58.519531 20.941406 59.851562 19.609375 61.492188 19.609375 L 88.929688 19.609375 C 90.570312 19.609375 91.902344 18.277344 91.902344 16.636719 " clip-rule="nonzero"/></clipPath><clipPath id="cef7f6f178"><rect x="0" y="0"/></clipPath><clipPath id="280bc3589c"><path d="M 115.050781 157.304688 L 202.84375 157.304688 L 202.84375 242 L 115.050781 242 Z M 115.050781 157.304688 " clip-rule="nonzero"/></clipPath><clipPath id="8d0972bec6"><path d="M 158.855469 221.253906 C 148.59375 221.253906 138.699219 214.097656 138.699219 199.628906 C 138.699219 184.976562 148.59375 178.171875 158.855469 178.171875 C 169.292969 178.171875 179.015625 184.976562 179.015625 199.628906 C 179.015625 214.28125 169.292969 221.253906 158.855469 221.253906 M 158.855469 157.464844 C 134.375 157.464844 115.191406 174.9375 115.191406 199.628906 C 115.191406 224.316406 134.375 241.953125 158.855469 241.953125 C 183.5 241.953125 202.523438 224.316406 202.523438 199.628906 C 202.523438 174.9375 183.5 157.464844 158.855469 157.464844 " clip-rule="nonzero"/></clipPath><clipPath id="af45d32fef"><path d="M 0.0507812 0.328125 L 87.527344 0.328125 L 87.527344 84.988281 L 0.0507812 84.988281 Z M 0.0507812 0.328125 " clip-rule="nonzero"/></clipPath><clipPath id="a78a6e7396"><path d="M 43.855469 64.253906 C 33.59375 64.253906 23.699219 57.097656 23.699219 42.628906 C 23.699219 27.976562 33.59375 21.171875 43.855469 21.171875 C 54.292969 21.171875 64.015625 27.976562 64.015625 42.628906 C 64.015625 57.28125 54.292969 64.253906 43.855469 64.253906 M 43.855469 0.464844 C 19.375 0.464844 0.191406 17.9375 0.191406 42.628906 C 0.191406 67.316406 19.375 84.953125 43.855469 84.953125 C 68.5 84.953125 87.523438 67.316406 87.523438 42.628906 C 87.523438 17.9375 68.5 0.464844 43.855469 0.464844 " clip-rule="nonzero"/></clipPath><clipPath id="ba8c6d8921"><rect x="0" y="0"/></clipPath><clipPath id="cc30fb7333"><path d="M 209.214844 157.304688 L 291 157.304688 L 291 242 L 209.214844 242 Z M 209.214844 157.304688 " clip-rule="nonzero"/></clipPath><clipPath id="95292b9dd8"><path d="M 289.496094 218.882812 C 285.125 216.578125 279.0625 213.394531 274.296875 210.898438 C 273.152344 210.296875 271.71875 210.691406 271.058594 211.808594 C 267.328125 218.171875 260.582031 221.253906 253.507812 221.253906 C 243.046875 221.253906 232.945312 214.097656 232.945312 199.628906 C 232.945312 184.976562 243.035156 178.171875 253.507812 178.171875 C 260.238281 178.171875 266.671875 180.894531 270.5 186.605469 C 271.214844 187.671875 272.574219 188.066406 273.710938 187.480469 C 278.242188 185.121094 284.28125 181.9375 288.894531 179.507812 C 290.179688 178.832031 290.605469 177.191406 289.804688 175.984375 C 282.117188 164.519531 268.746094 157.476562 253.101562 157.476562 C 228.621094 157.476562 209.433594 174.945312 209.433594 199.636719 C 209.433594 224.328125 228.621094 241.960938 253.101562 241.960938 C 269.1875 241.960938 282.875 234.445312 290.441406 222.363281 C 291.199219 221.15625 290.757812 219.558594 289.496094 218.894531 " clip-rule="nonzero"/></clipPath><clipPath id="02efd70a5c"><path d="M 0.242188 0.328125 L 82 0.328125 L 82 84.988281 L 0.242188 84.988281 Z M 0.242188 0.328125 " clip-rule="nonzero"/></clipPath><clipPath id="589b045fdd"><path d="M 80.496094 61.882812 C 76.125 59.578125 70.0625 56.394531 65.296875 53.898438 C 64.152344 53.296875 62.71875 53.691406 62.058594 54.808594 C 58.328125 61.171875 51.582031 64.253906 44.507812 64.253906 C 34.046875 64.253906 23.945312 57.097656 23.945312 42.628906 C 23.945312 27.976562 34.035156 21.171875 44.507812 21.171875 C 51.238281 21.171875 57.671875 23.894531 61.5 29.605469 C 62.214844 30.671875 63.574219 31.066406 64.710938 30.480469 C 69.242188 28.121094 75.28125 24.9375 79.894531 22.507812 C 81.179688 21.832031 81.605469 20.191406 80.804688 18.984375 C 73.117188 7.519531 59.746094 0.476562 44.101562 0.476562 C 19.621094 0.476562 0.433594 17.945312 0.433594 42.636719 C 0.433594 67.328125 19.621094 84.960938 44.101562 84.960938 C 60.1875 84.960938 73.875 77.445312 81.441406 65.363281 C 82.199219 64.15625 81.757812 62.558594 80.496094 61.894531 " clip-rule="nonzero"/></clipPath><clipPath id="cf4982ef91"><rect x="0" y="0"/></clipPath><clipPath id="1b2c708a4d"><path d="M 301.785156 128.820312 L 388.558594 128.820312 L 388.558594 240.332031 L 301.785156 240.332031 Z M 301.785156 128.820312 " clip-rule="nonzero"/></clipPath><clipPath id="32fb15e1ae"><path d="M 354.480469 194.28125 C 353.957031 193.617188 354.003906 192.660156 354.597656 192.046875 L 383.867188 161.761719 C 384.910156 160.679688 384.144531 158.871094 382.640625 158.871094 L 360.25 158.871094 C 359.808594 158.871094 359.382812 159.039062 359.058594 159.347656 L 328.441406 188.9375 C 327.359375 189.984375 325.546875 189.21875 325.546875 187.714844 L 325.546875 130.523438 C 325.546875 129.585938 324.78125 128.820312 323.84375 128.820312 L 303.488281 128.820312 C 302.550781 128.820312 301.785156 129.585938 301.785156 130.523438 L 301.785156 238.5 C 301.785156 239.445312 302.550781 240.203125 303.488281 240.203125 L 323.84375 240.203125 C 324.78125 240.203125 325.546875 239.4375 325.546875 238.5 L 325.546875 220.015625 C 325.546875 219.53125 325.753906 219.0625 326.125 218.746094 L 335.242188 210.636719 C 335.964844 209.996094 337.082031 210.078125 337.695312 210.835938 L 361.238281 239.578125 C 361.5625 239.976562 362.050781 240.203125 362.554688 240.203125 L 386.847656 240.203125 C 388.273438 240.203125 389.066406 238.570312 388.191406 237.445312 Z M 354.480469 194.28125 " clip-rule="nonzero"/></clipPath><clipPath id="d6ed7b796d"><path d="M 0.785156 0.820312 L 87.558594 0.820312 L 87.558594 112.3125 L 0.785156 112.3125 Z M 0.785156 0.820312 " clip-rule="nonzero"/></clipPath><clipPath id="b8ecfb33ba"><path d="M 53.480469 66.28125 C 52.957031 65.617188 53.003906 64.660156 53.597656 64.046875 L 82.867188 33.761719 C 83.910156 32.679688 83.144531 30.871094 81.640625 30.871094 L 59.25 30.871094 C 58.808594 30.871094 58.382812 31.039062 58.058594 31.347656 L 27.441406 60.9375 C 26.359375 61.984375 24.546875 61.21875 24.546875 59.714844 L 24.546875 2.523438 C 24.546875 1.585938 23.78125 0.820312 22.84375 0.820312 L 2.488281 0.820312 C 1.550781 0.820312 0.785156 1.585938 0.785156 2.523438 L 0.785156 110.5 C 0.785156 111.445312 1.550781 112.203125 2.488281 112.203125 L 22.84375 112.203125 C 23.78125 112.203125 24.546875 111.4375 24.546875 110.5 L 24.546875 92.015625 C 24.546875 91.53125 24.753906 91.0625 25.125 90.746094 L 34.242188 82.636719 C 34.964844 81.996094 36.082031 82.078125 36.695312 82.835938 L 60.238281 111.578125 C 60.5625 111.976562 61.050781 112.203125 61.554688 112.203125 L 85.847656 112.203125 C 87.273438 112.203125 88.066406 110.570312 87.191406 109.445312 Z M 53.480469 66.28125 " clip-rule="nonzero"/></clipPath><clipPath id="b78b332a55"><rect x="0" y="0"/></clipPath><clipPath id="bb5e85bea3"><path d="M 410.210938 95.035156 L 580.703125 95.035156 L 580.703125 259.464844 L 410.210938 259.464844 Z M 410.210938 95.035156 " clip-rule="nonzero"/></clipPath><clipPath id="84c5e94c9b"><path d="M 495.410156 95.496094 C 448.609375 95.496094 410.671875 133.433594 410.671875 180.234375 C 410.671875 216 432.839844 246.574219 464.179688 259.007812 L 471.089844 238.175781 C 448.480469 228.652344 432.578125 206.269531 432.578125 180.246094 C 432.578125 145.597656 460.761719 117.410156 495.410156 117.410156 C 530.058594 117.410156 558.242188 145.597656 558.242188 180.246094 C 558.242188 205.601562 543.140625 227.480469 521.460938 237.398438 L 528.398438 258.316406 C 558.8125 245.445312 580.140625 215.332031 580.140625 180.246094 C 580.148438 133.433594 542.203125 95.496094 495.410156 95.496094 " clip-rule="nonzero"/></clipPath><clipPath id="3b6b13e9ad"><path d="M 0.460938 0.453125 L 170.261719 0.453125 L 170.261719 164.015625 L 0.460938 164.015625 Z M 0.460938 0.453125 " clip-rule="nonzero"/></clipPath><clipPath id="db3c57bfb0"><path d="M 85.410156 0.496094 C 38.609375 0.496094 0.671875 38.433594 0.671875 85.234375 C 0.671875 121 22.839844 151.574219 54.179688 164.007812 L 61.089844 143.175781 C 38.480469 133.652344 22.578125 111.269531 22.578125 85.246094 C 22.578125 50.597656 50.761719 22.410156 85.410156 22.410156 C 120.058594 22.410156 148.242188 50.597656 148.242188 85.246094 C 148.242188 110.601562 133.140625 132.480469 111.460938 142.398438 L 118.398438 163.316406 C 148.8125 150.445312 170.140625 120.332031 170.140625 85.246094 C 170.148438 38.433594 132.203125 0.496094 85.410156 0.496094 " clip-rule="nonzero"/></clipPath><clipPath id="9ba43fdda8"><rect x="0" y="0"/></clipPath><clipPath id="2651aca30b"><path d="M 444 128.054688 L 549 128.054688 L 549 227.792969 L 444 227.792969 Z M 444 128.054688 " clip-rule="nonzero"/></clipPath><clipPath id="5373e97b51"><path d="M 496.402344 128.214844 C 467.675781 128.214844 444.382812 151.507812 444.382812 180.234375 C 444.382812 201.195312 456.78125 219.242188 474.632812 227.480469 L 481.921875 205.492188 C 473.179688 200.464844 467.269531 191.03125 467.269531 180.234375 C 467.269531 164.179688 480.335938 151.113281 496.390625 151.113281 C 512.449219 151.113281 525.515625 164.179688 525.515625 180.234375 C 525.515625 191.019531 519.613281 200.457031 510.871094 205.484375 L 518.164062 227.46875 C 536.011719 219.226562 548.414062 201.1875 548.414062 180.226562 C 548.414062 151.5 525.117188 128.207031 496.390625 128.207031 " clip-rule="nonzero"/></clipPath><clipPath id="63d12c3cf1"><path d="M 0.277344 0.0703125 L 104.605469 0.0703125 L 104.605469 99.597656 L 0.277344 99.597656 Z M 0.277344 0.0703125 " clip-rule="nonzero"/></clipPath><clipPath id="ce8b2d6594"><path d="M 52.402344 0.214844 C 23.675781 0.214844 0.382812 23.507812 0.382812 52.234375 C 0.382812 73.195312 12.78125 91.242188 30.632812 99.480469 L 37.921875 77.492188 C 29.179688 72.464844 23.269531 63.03125 23.269531 52.234375 C 23.269531 36.179688 36.335938 23.113281 52.390625 23.113281 C 68.449219 23.113281 81.515625 36.179688 81.515625 52.234375 C 81.515625 63.019531 75.613281 72.457031 66.871094 77.484375 L 74.164062 99.46875 C 92.011719 91.226562 104.414062 73.1875 104.414062 52.226562 C 104.414062 23.5 81.117188 0.207031 52.390625 0.207031 " clip-rule="nonzero"/></clipPath><clipPath id="b471a9e07f"><rect x="0" y="0"/></clipPath><clipPath id="24ad0fa4ca"><path d="M 613.554688 134 L 689.898438 134 L 689.898438 240 L 613.554688 240 Z M 613.554688 134 " clip-rule="nonzero"/></clipPath><clipPath id="d41081590c"><path d="M 686.855469 220.71875 L 640.546875 220.71875 C 638.90625 220.71875 637.574219 219.386719 637.574219 217.746094 L 637.574219 137.097656 C 637.574219 135.460938 636.238281 134.125 634.601562 134.125 L 616.742188 134.125 C 615.101562 134.125 613.765625 135.460938 613.765625 137.097656 L 613.765625 237.246094 C 613.765625 238.671875 614.921875 239.8125 616.335938 239.8125 L 686.855469 239.8125 C 688.492188 239.8125 689.828125 238.480469 689.828125 236.839844 L 689.828125 223.703125 C 689.828125 222.0625 688.492188 220.730469 686.855469 220.730469 " clip-rule="nonzero"/></clipPath><clipPath id="f57d89a47d"><path d="M 0.597656 0.0664062 L 76.863281 0.0664062 L 76.863281 105.832031 L 0.597656 105.832031 Z M 0.597656 0.0664062 " clip-rule="nonzero"/></clipPath><clipPath id="650fdac462"><path d="M 73.855469 86.71875 L 27.546875 86.71875 C 25.90625 86.71875 24.574219 85.386719 24.574219 83.746094 L 24.574219 3.097656 C 24.574219 1.460938 23.238281 0.125 21.601562 0.125 L 3.742188 0.125 C 2.101562 0.125 0.765625 1.460938 0.765625 3.097656 L 0.765625 103.246094 C 0.765625 104.671875 1.921875 105.8125 3.335938 105.8125 L 73.855469 105.8125 C 75.492188 105.8125 76.828125 104.480469 76.828125 102.839844 L 76.828125 89.703125 C 76.828125 88.0625 75.492188 86.730469 73.855469 86.730469 " clip-rule="nonzero"/></clipPath><clipPath id="d37beafcaa"><rect x="0" y="0"/></clipPath><clipPath id="9a03b04a35"><path d="M 691.332031 157.234375 L 779 157.234375 L 779 242 L 691.332031 242 Z M 691.332031 157.234375 " clip-rule="nonzero"/></clipPath><clipPath id="12d8417ba0"><path d="M 735.070312 221.25 C 724.816406 221.25 714.914062 214.097656 714.914062 199.625 C 714.914062 184.972656 724.808594 178.171875 735.070312 178.171875 C 745.507812 178.171875 755.230469 184.972656 755.230469 199.625 C 755.230469 214.277344 745.507812 221.25 735.070312 221.25 M 735.070312 157.464844 C 710.589844 157.464844 691.40625 174.9375 691.40625 199.625 C 691.40625 224.316406 710.589844 241.949219 735.070312 241.949219 C 759.714844 241.949219 778.738281 224.316406 778.738281 199.625 C 778.738281 174.9375 759.714844 157.472656 735.070312 157.472656 " clip-rule="nonzero"/></clipPath><clipPath id="0336f42ff2"><path d="M 0.332031 0.328125 L 87.84375 0.328125 L 87.84375 84.988281 L 0.332031 84.988281 Z M 0.332031 0.328125 " clip-rule="nonzero"/></clipPath><clipPath id="ee4a299137"><path d="M 44.070312 64.25 C 33.816406 64.25 23.914062 57.097656 23.914062 42.625 C 23.914062 27.972656 33.808594 21.171875 44.070312 21.171875 C 54.507812 21.171875 64.230469 27.972656 64.230469 42.625 C 64.230469 57.277344 54.507812 64.25 44.070312 64.25 M 44.070312 0.464844 C 19.589844 0.464844 0.40625 17.9375 0.40625 42.625 C 0.40625 67.316406 19.589844 84.949219 44.070312 84.949219 C 68.714844 84.949219 87.738281 67.316406 87.738281 42.625 C 87.738281 17.9375 68.714844 0.472656 44.070312 0.472656 " clip-rule="nonzero"/></clipPath><clipPath id="edf3cd7445"><rect x="0" y="0"/></clipPath><clipPath id="b57d6a3f40"><path d="M 876 128.605469 L 962.824219 128.605469 L 962.824219 240.257812 L 876 240.257812 Z M 876 128.605469 " clip-rule="nonzero"/></clipPath><clipPath id="0f1b9cfa13"><path d="M 928.695312 194.28125 C 928.175781 193.617188 928.21875 192.660156 928.8125 192.046875 L 958.082031 161.761719 C 959.125 160.679688 958.359375 158.871094 956.855469 158.871094 L 934.472656 158.871094 C 934.03125 158.871094 933.609375 159.039062 933.285156 159.347656 L 902.664062 188.9375 C 901.582031 189.984375 899.773438 189.21875 899.773438 187.714844 L 899.773438 130.523438 C 899.773438 129.574219 899.007812 128.820312 898.070312 128.820312 L 877.714844 128.820312 C 876.765625 128.820312 876.011719 129.585938 876.011719 130.523438 L 876.011719 238.5 C 876.011719 239.445312 876.777344 240.203125 877.714844 240.203125 L 898.058594 240.203125 C 899.007812 240.203125 899.761719 239.4375 899.761719 238.5 L 899.761719 220.015625 C 899.761719 219.53125 899.96875 219.0625 900.339844 218.746094 L 909.457031 210.644531 C 910.179688 210.007812 911.296875 210.085938 911.910156 210.84375 L 935.453125 239.589844 C 935.777344 239.984375 936.265625 240.210938 936.769531 240.210938 L 961.0625 240.210938 C 962.488281 240.210938 963.28125 238.578125 962.40625 237.453125 Z M 928.695312 194.28125 " clip-rule="nonzero"/></clipPath><clipPath id="9ab228da9d"><path d="M 0 0.789062 L 86.824219 0.789062 L 86.824219 112.257812 L 0 112.257812 Z M 0 0.789062 " clip-rule="nonzero"/></clipPath><clipPath id="774661d86c"><path d="M 52.695312 66.28125 C 52.175781 65.617188 52.21875 64.660156 52.8125 64.046875 L 82.082031 33.761719 C 83.125 32.679688 82.359375 30.871094 80.855469 30.871094 L 58.472656 30.871094 C 58.03125 30.871094 57.609375 31.039062 57.285156 31.347656 L 26.664062 60.9375 C 25.582031 61.984375 23.773438 61.21875 23.773438 59.714844 L 23.773438 2.523438 C 23.773438 1.574219 23.007812 0.820312 22.070312 0.820312 L 1.714844 0.820312 C 0.765625 0.820312 0.0117188 1.585938 0.0117188 2.523438 L 0.0117188 110.5 C 0.0117188 111.445312 0.777344 112.203125 1.714844 112.203125 L 22.058594 112.203125 C 23.007812 112.203125 23.761719 111.4375 23.761719 110.5 L 23.761719 92.015625 C 23.761719 91.53125 23.96875 91.0625 24.339844 90.746094 L 33.457031 82.644531 C 34.179688 82.007812 35.296875 82.085938 35.910156 82.84375 L 59.453125 111.589844 C 59.777344 111.984375 60.265625 112.210938 60.769531 112.210938 L 85.0625 112.210938 C 86.488281 112.210938 87.28125 110.578125 86.40625 109.453125 Z M 52.695312 66.28125 " clip-rule="nonzero"/></clipPath><clipPath id="906fe69d59"><rect x="0" y="0"/></clipPath><clipPath id="94d42361d3"><path d="M 785.328125 157.234375 L 867.394531 157.234375 L 867.394531 242 L 785.328125 242 Z M 785.328125 157.234375 " clip-rule="nonzero"/></clipPath><clipPath id="d10eb5a378"><path d="M 865.710938 218.890625 C 861.339844 216.585938 855.277344 213.402344 850.507812 210.90625 C 849.363281 210.304688 847.933594 210.699219 847.273438 211.816406 C 843.542969 218.179688 836.796875 221.261719 829.722656 221.261719 C 819.261719 221.261719 809.160156 214.105469 809.160156 199.636719 C 809.160156 184.984375 819.25 178.179688 829.722656 178.179688 C 836.453125 178.179688 842.886719 180.902344 846.714844 186.613281 C 847.429688 187.675781 848.789062 188.074219 849.921875 187.488281 C 854.457031 185.128906 860.492188 181.945312 865.105469 179.511719 C 866.394531 178.835938 866.820312 177.199219 866.015625 175.992188 C 858.332031 164.527344 844.957031 157.480469 829.316406 157.480469 C 804.832031 157.480469 785.648438 174.953125 785.648438 199.644531 C 785.648438 224.332031 804.832031 241.96875 829.316406 241.96875 C 845.398438 241.96875 859.085938 234.453125 866.65625 222.371094 C 867.414062 221.160156 866.972656 219.566406 865.710938 218.898438 " clip-rule="nonzero"/></clipPath><clipPath id="a1e7c6c56d"><path d="M 0.558594 0.328125 L 82.394531 0.328125 L 82.394531 84.988281 L 0.558594 84.988281 Z M 0.558594 0.328125 " clip-rule="nonzero"/></clipPath><clipPath id="5944eef640"><path d="M 80.710938 61.890625 C 76.339844 59.585938 70.277344 56.402344 65.507812 53.90625 C 64.363281 53.304688 62.933594 53.699219 62.273438 54.816406 C 58.542969 61.179688 51.796875 64.261719 44.722656 64.261719 C 34.261719 64.261719 24.160156 57.105469 24.160156 42.636719 C 24.160156 27.984375 34.25 21.179688 44.722656 21.179688 C 51.453125 21.179688 57.886719 23.902344 61.714844 29.613281 C 62.429688 30.675781 63.789062 31.074219 64.921875 30.488281 C 69.457031 28.128906 75.492188 24.945312 80.105469 22.511719 C 81.394531 21.835938 81.820312 20.199219 81.015625 18.992188 C 73.332031 7.527344 59.957031 0.480469 44.316406 0.480469 C 19.832031 0.480469 0.648438 17.953125 0.648438 42.644531 C 0.648438 67.332031 19.832031 84.96875 44.316406 84.96875 C 60.398438 84.96875 74.085938 77.453125 81.65625 65.371094 C 82.414062 64.160156 81.972656 62.566406 80.710938 61.898438 " clip-rule="nonzero"/></clipPath><clipPath id="cc18cb5950"><rect x="0" y="0"/></clipPath><clipPath id="b9d15852c1"><path d="M 969.503906 217.355469 L 994.792969 217.355469 L 994.792969 242 L 969.503906 242 Z M 969.503906 217.355469 " clip-rule="nonzero"/></clipPath><clipPath id="69477e5dac"><path d="M 982.203125 239.121094 C 976.75 239.121094 972.769531 234.847656 972.769531 229.46875 C 972.769531 224.164062 976.75 219.820312 982.132812 219.820312 C 987.511719 219.820312 991.414062 224.164062 991.414062 229.542969 C 991.414062 234.847656 987.511719 239.121094 982.203125 239.121094 M 982.132812 217.386719 C 975.203125 217.386719 969.679688 222.765625 969.679688 229.46875 C 969.679688 236.328125 975.203125 241.699219 982.132812 241.699219 C 989.132812 241.699219 994.511719 236.316406 994.511719 229.46875 C 994.511719 222.765625 989.132812 217.386719 982.132812 217.386719 " clip-rule="nonzero"/></clipPath><clipPath id="de06bf6818"><path d="M 0.507812 0.355469 L 25.691406 0.355469 L 25.691406 24.75 L 0.507812 24.75 Z M 0.507812 0.355469 " clip-rule="nonzero"/></clipPath><clipPath id="86d3d2f565"><path d="M 13.203125 22.121094 C 7.75 22.121094 3.769531 17.847656 3.769531 12.46875 C 3.769531 7.164062 7.75 2.820312 13.132812 2.820312 C 18.511719 2.820312 22.414062 7.164062 22.414062 12.542969 C 22.414062 17.847656 18.511719 22.121094 13.203125 22.121094 M 13.132812 0.386719 C 6.203125 0.386719 0.679688 5.765625 0.679688 12.46875 C 0.679688 19.328125 6.203125 24.699219 13.132812 24.699219 C 20.132812 24.699219 25.511719 19.316406 25.511719 12.46875 C 25.511719 5.765625 20.132812 0.386719 13.132812 0.386719 " clip-rule="nonzero"/></clipPath><clipPath id="91ce1e624c"><rect x="0" y="0"/></clipPath><clipPath id="9a8a2c27cb"><path d="M 977.140625 223.082031 L 988.113281 223.082031 L 988.113281 235.964844 L 977.140625 235.964844 Z M 977.140625 223.082031 " clip-rule="nonzero"/></clipPath><clipPath id="95a2cee10c"><path d="M 981.617188 228.957031 L 980.292969 228.957031 L 980.292969 225.496094 C 980.589844 225.425781 981.105469 225.351562 981.84375 225.351562 C 983.609375 225.351562 984.421875 226.089844 984.421875 227.191406 C 984.421875 228.441406 983.167969 228.957031 981.617188 228.957031 M 984.933594 229.839844 L 984.933594 229.695312 C 986.410156 229.253906 987.4375 228.21875 987.4375 226.894531 C 987.4375 225.710938 986.925781 224.757812 986.257812 224.242188 C 985.375 223.730469 984.339844 223.359375 982.058594 223.359375 C 980.066406 223.359375 978.519531 223.503906 977.417969 223.730469 L 977.417969 235.8125 L 980.222656 235.8125 L 980.222656 230.949219 L 981.546875 230.949219 C 983.09375 230.949219 983.835938 231.535156 984.050781 232.867188 C 984.421875 234.261719 984.636719 235.371094 985.003906 235.8125 L 988.023438 235.8125 C 987.726562 235.371094 987.511719 234.632812 987.140625 232.792969 C 986.773438 231.171875 986.105469 230.289062 984.933594 229.847656 " clip-rule="nonzero"/></clipPath><clipPath id="3ec5ee76e1"><path d="M 0.183594 0.28125 L 11.113281 0.28125 L 11.113281 12.964844 L 0.183594 12.964844 Z M 0.183594 0.28125 " clip-rule="nonzero"/></clipPath><clipPath id="ca4ff54d51"><path d="M 4.617188 5.957031 L 3.292969 5.957031 L 3.292969 2.496094 C 3.589844 2.425781 4.105469 2.351562 4.84375 2.351562 C 6.609375 2.351562 7.421875 3.089844 7.421875 4.191406 C 7.421875 5.441406 6.167969 5.957031 4.617188 5.957031 M 7.933594 6.839844 L 7.933594 6.695312 C 9.410156 6.253906 10.4375 5.21875 10.4375 3.894531 C 10.4375 2.710938 9.925781 1.757812 9.257812 1.242188 C 8.375 0.730469 7.339844 0.359375 5.058594 0.359375 C 3.066406 0.359375 1.519531 0.503906 0.417969 0.730469 L 0.417969 12.8125 L 3.222656 12.8125 L 3.222656 7.949219 L 4.546875 7.949219 C 6.09375 7.949219 6.835938 8.535156 7.050781 9.867188 C 7.421875 11.261719 7.636719 12.371094 8.003906 12.8125 L 11.023438 12.8125 C 10.726562 12.371094 10.511719 11.632812 10.140625 9.792969 C 9.773438 8.171875 9.105469 7.289062 7.933594 6.847656 " clip-rule="nonzero"/></clipPath><clipPath id="95d0a5de1b"><rect x="0" y="0"/></clipPath></defs><g clip-path="url(#5e31c79e10)"><path fill="none" d="M 0.109375 0 L 1023.890625 0 L 1023.890625 354.5 L 0.109375 354.5 Z M 0.109375 0 " fill-opacity="1" fill-rule="nonzero"/><path fill="none" d="M 0.109375 0 L 1023.890625 0 L 1023.890625 354.5 L 0.109375 354.5 Z M 0.109375 0 " fill-opacity="1" fill-rule="nonzero"/></g><g clip-path="url(#47b3749b48)"><g clip-path="url(#e76f38a259)"><g transform="matrix(1, 0, 0, 1, 29, 134)"><g clip-path="url(#cef7f6f178)"><g clip-path="url(#32fcf81a39)"><g clip-path="url(#4f3841f4cd)"><rect x="-254.39" fill="#000000" y="-212.044997" fill-opacity="1"/></g></g></g></g></g></g><g clip-path="url(#280bc3589c)"><g clip-path="url(#8d0972bec6)"><g transform="matrix(1, 0, 0, 1, 115, 157)"><g clip-path="url(#ba8c6d8921)"><g clip-path="url(#af45d32fef)"><g clip-path="url(#a78a6e7396)"><rect x="-340.39" fill="#000000" y="-235.044997" fill-opacity="1"/></g></g></g></g></g></g><g clip-path="url(#cc30fb7333)"><g clip-path="url(#95292b9dd8)"><g transform="matrix(1, 0, 0, 1, 209, 157)"><g clip-path="url(#cf4982ef91)"><g clip-path="url(#02efd70a5c)"><g clip-path="url(#589b045fdd)"><rect x="-434.39" fill="#000000" y="-235.044997" fill-opacity="1"/></g></g></g></g></g></g><g clip-path="url(#1b2c708a4d)"><g clip-path="url(#32fb15e1ae)"><g transform="matrix(1, 0, 0, 1, 301, 128)"><g clip-path="url(#b78b332a55)"><g clip-path="url(#d6ed7b796d)"><g clip-path="url(#b8ecfb33ba)"><path fill="#000000" d="M 0.785156 0.820312 L 87.558594 0.820312 L 87.558594 112.332031 L 0.785156 112.332031 Z M 0.785156 0.820312 " fill-opacity="1" fill-rule="nonzero"/></g></g></g></g></g></g><g clip-path="url(#bb5e85bea3)"><g clip-path="url(#84c5e94c9b)"><g transform="matrix(1, 0, 0, 1, 410, 95)"><g clip-path="url(#9ba43fdda8)"><g clip-path="url(#3b6b13e9ad)"><g clip-path="url(#db3c57bfb0)"><rect x="-635.39" fill="#007ad1" y="-173.044997" fill-opacity="1"/></g></g></g></g></g></g><g clip-path="url(#2651aca30b)"><g clip-path="url(#5373e97b51)"><g transform="matrix(1, 0, 0, 1, 444, 128)"><g clip-path="url(#b471a9e07f)"><g clip-path="url(#63d12c3cf1)"><g clip-path="url(#ce8b2d6594)"><rect x="-669.39" fill="#007ad1" y="-206.044997" fill-opacity="1"/></g></g></g></g></g></g><g clip-path="url(#24ad0fa4ca)"><g clip-path="url(#d41081590c)"><g transform="matrix(1, 0, 0, 1, 613, 134)"><g clip-path="url(#d37beafcaa)"><g clip-path="url(#f57d89a47d)"><g clip-path="url(#650fdac462)"><rect x="-838.39" fill="#000000" y="-212.044997" fill-opacity="1"/></g></g></g></g></g></g><g clip-path="url(#9a03b04a35)"><g clip-path="url(#12d8417ba0)"><g transform="matrix(1, 0, 0, 1, 691, 157)"><g clip-path="url(#edf3cd7445)"><g clip-path="url(#0336f42ff2)"><g clip-path="url(#ee4a299137)"><rect x="-916.39" fill="#000000" y="-235.044997" fill-opacity="1"/></g></g></g></g></g></g><g clip-path="url(#b57d6a3f40)"><g clip-path="url(#0f1b9cfa13)"><g transform="matrix(1, 0, 0, 1, 876, 128)"><g clip-path="url(#906fe69d59)"><g clip-path="url(#9ab228da9d)"><g clip-path="url(#774661d86c)"><rect x="-1101.39" fill="#000000" y="-206.044997" fill-opacity="1"/></g></g></g></g></g></g><g clip-path="url(#94d42361d3)"><g clip-path="url(#d10eb5a378)"><g transform="matrix(1, 0, 0, 1, 785, 157)"><g clip-path="url(#cc18cb5950)"><g clip-path="url(#a1e7c6c56d)"><g clip-path="url(#5944eef640)"><rect x="-1010.39" fill="#000000" y="-235.044997" fill-opacity="1"/></g></g></g></g></g></g><g clip-path="url(#b9d15852c1)"><g clip-path="url(#69477e5dac)"><g transform="matrix(1, 0, 0, 1, 969, 217)"><g clip-path="url(#91ce1e624c)"><g clip-path="url(#de06bf6818)"><g clip-path="url(#86d3d2f565)"><rect x="-1194.39" fill="#000000" y="-295.044997" fill-opacity="1"/></g></g></g></g></g></g><g clip-path="url(#9a8a2c27cb)"><g clip-path="url(#95a2cee10c)"><g transform="matrix(1, 0, 0, 1, 977, 223)"><g clip-path="url(#95d0a5de1b)"><g clip-path="url(#3ec5ee76e1)"><g clip-path="url(#ca4ff54d51)"><rect x="-1202.39" fill="#000000" y="-301.044997" fill-opacity="1"/></g></g></g></g></g></g></svg>
+  </div>
+  <div class="header-divider"></div>
+  <span class="header-title">Cotizador de precios</span>
+  <span class="header-badge">TOCK DAYS</span>
+  <span class="header-dates">21 Mayo &ndash; 02 Junio 2026</span>
+</header>
+
+<div class="hero">
+  <div class="hero-text">
+    <h2>Precios Tock Days 2026</h2>
+    <p>Consulta precios con descuento por equipo e instalaci&oacute;n &mdash; uso exclusivo asesores</p>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="hero-stat-val">49</div><div class="hero-stat-lbl">Productos</div></div>
+    <div class="hero-stat"><div class="hero-stat-val">20%</div><div class="hero-stat-lbl">Desc. instalaci&oacute;n</div></div>
+    <div class="hero-stat"><div class="hero-stat-val">40%</div><div class="hero-stat-lbl">M&aacute;x. en equipo</div></div>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="search-card">
+    <div class="search-card-head">Buscar producto</div>
+    <div class="search-row">
+      <input type="text" id="buscar" placeholder="Escribe el nombre del modelo..." oninput="render()">
+      <select id="fcat" onchange="render()">
+        <option value="">Todas las categor&iacute;as</option>
+        <option value="Cerradura inteligente">Cerraduras</option>
+        <option value="Accesorio">Accesorios</option>
+      </select>
+      <select id="fniv" onchange="render()">
+        <option value="">Todos los niveles</option>
+        <option value="N1">N1</option>
+        <option value="N2">N2</option>
+        <option value="N3">N3</option>
+        <option value="N4">N4</option>
+        <option value="N5">N5</option>
+        <option value="Sin Instalaci&oacute;n">Sin instalaci&oacute;n</option>
+      </select>
+      <span class="result-count" id="result-count">49 productos</span>
+    </div>
+  </div>
+
+  <div class="results-grid" id="grid"></div>
+
+  <div class="ref-section">
+    <div class="ref-section-head">Niveles de instalaci&oacute;n &mdash; 20% descuento Tock Days</div>
+    <div class="niveles-grid" id="niveles-ref"></div>
+  </div>
+
+</div>
+
+<footer class="site-footer">
+  Precios v&aacute;lidos del 21 de Mayo al 02 de Junio 2026 &nbsp;&middot;&nbsp; *Precios no incluyen IVA &nbsp;&middot;&nbsp; Uso exclusivo asesores TockLock
+</footer>
+
+<script>
+const NIVELES = {
+  "N1": { regular: 890,  desc: "Instalaci\u00f3n b\u00e1sica" },
+  "N2": { regular: 1390, desc: "Instalaci\u00f3n est\u00e1ndar" },
+  "N3": { regular: 1890, desc: "Instalaci\u00f3n avanzada" },
+  "N4": { regular: 500,  desc: "Instalaci\u00f3n express" },
+  "N5": { regular: 300,  desc: "Instalaci\u00f3n m\u00ednima" },
+};
+
+const PRODUCTOS = [
+  {cat:"Cerradura inteligente",mod:"TLX01",reg:3699,desc:20,tok:2959,niv:"N2"},
+  {cat:"Cerradura inteligente",mod:"TLX01 Huella",reg:3699,desc:30,tok:2589,niv:"N2"},
+  {cat:"Cerradura inteligente",mod:"TLX02 TL",reg:3899,desc:20,tok:3119,niv:"N2"},
+  {cat:"Cerradura inteligente",mod:"TLX02 TS (20%)",reg:3899,desc:20,tok:3119,niv:"N2"},
+  {cat:"Cerradura inteligente",mod:"TLX02 TS (30%)",reg:3899,desc:30,tok:2729,niv:"N2"},
+  {cat:"Cerradura inteligente",mod:"TLX20 TL / TS",reg:3299,desc:20,tok:2639,niv:"N2"},
+  {cat:"Cerradura inteligente",mod:"TOCK100 TS (35%)",reg:3999,desc:35,tok:2599,niv:"N2"},
+  {cat:"Cerradura inteligente",mod:"TOCK100 TS (40%)",reg:3999,desc:40,tok:2399,niv:"N2"},
+  {cat:"Cerradura inteligente",mod:"TOCK100 TL",reg:3999,desc:35,tok:2599,niv:"N2"},
+  {cat:"Cerradura inteligente",mod:"TLX09 TL",reg:5499,desc:20,tok:4399,niv:"N2"},
+  {cat:"Cerradura inteligente",mod:"TLX20 Plus",reg:3999,desc:20,tok:3199,niv:"N3"},
+  {cat:"Cerradura inteligente",mod:"TLX02 Plus TL",reg:4599,desc:20,tok:3679,niv:"N3"},
+  {cat:"Cerradura inteligente",mod:"TLX02 Plus TS (20%)",reg:4599,desc:20,tok:3679,niv:"N3"},
+  {cat:"Cerradura inteligente",mod:"TLX02 Plus TS (30%)",reg:4599,desc:30,tok:3219,niv:"N3"},
+  {cat:"Cerradura inteligente",mod:"TOCK100 Plus TS (40%)",reg:4999,desc:40,tok:2999,niv:"N3"},
+  {cat:"Cerradura inteligente",mod:"TOCK100 Plus TL (40%)",reg:4999,desc:40,tok:2999,niv:"N3"},
+  {cat:"Cerradura inteligente",mod:"TOCK100 Plus TL (20%)",reg:4999,desc:20,tok:3999,niv:"N3"},
+  {cat:"Cerradura inteligente",mod:"XS TL",reg:6499,desc:20,tok:5199,niv:"N3"},
+  {cat:"Cerradura inteligente",mod:"XS Face TL",reg:7999,desc:20,tok:6399,niv:"N3"},
+  {cat:"Cerradura inteligente",mod:"TLX07",reg:5399,desc:20,tok:4319,niv:"N3"},
+  {cat:"Cerradura inteligente",mod:"TLX07 Twin",reg:6499,desc:20,tok:5199,niv:"N3"},
+  {cat:"Cerradura inteligente",mod:"Tock Lite",reg:1899,desc:15,tok:1614,niv:"N1"},
+  {cat:"Cerradura inteligente",mod:"TOCK250X TL",reg:3499,desc:20,tok:2799,niv:"N1"},
+  {cat:"Cerradura inteligente",mod:"TOCK250X TS",reg:3499,desc:30,tok:2449,niv:"N1"},
+  {cat:"Cerradura inteligente",mod:"Tock Bolt",reg:2499,desc:20,tok:1999,niv:"N1"},
+  {cat:"Cerradura inteligente",mod:"TLX11",reg:2499,desc:20,tok:1999,niv:"N1"},
+  {cat:"Cerradura inteligente",mod:"TLX03",reg:3699,desc:20,tok:2959,niv:"N1"},
+  {cat:"Cerradura inteligente",mod:"Tock S",reg:2499,desc:20,tok:1999,niv:"N1"},
+  {cat:"Cerradura inteligente",mod:"Tock C",reg:3599,desc:20,tok:2879,niv:"N1"},
+  {cat:"Cerradura inteligente",mod:"Tock R1",reg:2899,desc:20,tok:2319,niv:"N1"},
+  {cat:"Cerradura inteligente",mod:"TLX06",reg:3699,desc:20,tok:2959,niv:"N3"},
+  {cat:"Cerradura inteligente",mod:"TLX06 Plus",reg:6499,desc:20,tok:5199,niv:"N3"},
+  {cat:"Cerradura inteligente",mod:"Tock XT",reg:3699,desc:20,tok:2959,niv:"N3"},
+  {cat:"Cerradura inteligente",mod:"Tock XT Twin",reg:5999,desc:20,tok:4799,niv:"N3"},
+  {cat:"Cerradura inteligente",mod:"Tock Box X",reg:2999,desc:20,tok:2399,niv:"N4"},
+  {cat:"Cerradura inteligente",mod:"Tock Fortek",reg:3999,desc:20,tok:3199,niv:"Sin Instalaci\u00f3n"},
+  {cat:"Cerradura inteligente",mod:"TLX20 Plus Puerta Seg.",reg:4499,desc:20,tok:3599,niv:"N3"},
+  {cat:"Cerradura inteligente",mod:"TLX02 Plus Puerta Seg.",reg:5099,desc:20,tok:4079,niv:"N3"},
+  {cat:"Cerradura inteligente",mod:"XS Puerta Seguridad",reg:6999,desc:20,tok:5599,niv:"N3"},
+  {cat:"Cerradura inteligente",mod:"XS Face Puerta Seg.",reg:8499,desc:20,tok:6799,niv:"N3"},
+  {cat:"Accesorio",mod:"Gateway G2",reg:1199,desc:10,tok:1079,niv:"N5"},
+  {cat:"Accesorio",mod:"Gateway G3",reg:1199,desc:10,tok:1079,niv:"N5"},
+  {cat:"Accesorio",mod:"Gateway G5",reg:1199,desc:10,tok:1079,niv:"N5"},
+  {cat:"Accesorio",mod:"Sensor de Cierre TL",reg:599,desc:15,tok:509,niv:"Sin Instalaci\u00f3n"},
+  {cat:"Accesorio",mod:"Control BT - TL",reg:799,desc:15,tok:679,niv:"Sin Instalaci\u00f3n"},
+  {cat:"Accesorio",mod:"Tarjetas RFID (10 pack)",reg:500,desc:15,tok:425,niv:"Sin Instalaci\u00f3n"},
+  {cat:"Accesorio",mod:"Tarjetas RFID (5 pack)",reg:300,desc:15,tok:255,niv:"Sin Instalaci\u00f3n"},
+  {cat:"Accesorio",mod:"Pulseras RFID (5 pack)",reg:449,desc:15,tok:381,niv:"Sin Instalaci\u00f3n"},
+  {cat:"Accesorio",mod:"Pulseras RFID (10 pack)",reg:849,desc:15,tok:721,niv:"Sin Instalaci\u00f3n"},
+];
+
+function fmt(n){ return '$' + Math.round(n).toLocaleString('es-MX'); }
+function pillCls(d){ return 'd' + d; }
+
+function buildCard(p) {
+  const niv = NIVELES[p.niv];
+  const insReg   = niv ? niv.regular : 0;
+  const insPromo = niv ? Math.round(insReg * 0.80) : 0;
+  const insSave  = insReg - insPromo;
+  const tieneIns = niv && insReg > 0;
+  const total       = p.tok + insPromo;
+  const ahorroEquipo = p.reg - p.tok;
+  const ahorroTotal  = ahorroEquipo + insSave;
+  const catCls  = p.cat === 'Accesorio' ? 'cat-accesorio' : 'cat-cerradura';
+  const catLabel = p.cat === 'Accesorio' ? 'Accesorio' : 'Cerradura';
+  const nivLabel = tieneIns ? p.niv + ' — ' + niv.desc : 'Sin instalaci\u00f3n';
+
+  const insHTML = tieneIns ? `
+    <hr class="ins-divider">
+    <div class="ins-section-label">Instalaci\u00f3n ${p.niv}</div>
+    <div class="precio-row">
+      <span class="precio-label">Precio regular instalaci\u00f3n</span>
+      <span class="precio-val tachado">${fmt(insReg)}</span>
+    </div>
+    <div class="precio-row">
+      <span class="precio-label">Instalaci\u00f3n Tock Days <span class="disc-pill d20">&minus;20%</span></span>
+      <span class="precio-val tock">${fmt(insPromo)}</span>
+    </div>
+    <div class="precio-row">
+      <span class="precio-label">Ahorro instalaci\u00f3n</span>
+      <span class="precio-val ahorro">${fmt(insSave)}</span>
+    </div>` : `
+    <hr class="ins-divider">
+    <div class="ins-section-label" style="color:var(--gray-muted)">Sin instalaci\u00f3n incluida</div>`;
+
+  return `
+    <div class="prod-card" onclick="this.classList.toggle('active')">
+      <div class="prod-card-top">
+        <div>
+          <div class="prod-name">${p.mod}</div>
+          <div class="prod-nivel-tag">${nivLabel}</div>
+        </div>
+        <span class="cat-badge ${catCls}">${catLabel}</span>
+      </div>
+      <div class="precio-row">
+        <span class="precio-label">Precio regular</span>
+        <span class="precio-val tachado">${fmt(p.reg)}</span>
+      </div>
+      <div class="precio-row">
+        <span class="precio-label">Precio Tock Days <span class="disc-pill ${pillCls(p.desc)}">&minus;${p.desc}%</span></span>
+        <span class="precio-val tock">${fmt(p.tok)}</span>
+      </div>
+      <div class="precio-row">
+        <span class="precio-label">Ahorro en equipo</span>
+        <span class="precio-val ahorro">${fmt(ahorroEquipo)}</span>
+      </div>
+      ${insHTML}
+      <div class="total-box">
+        <div class="total-left">
+          <div class="total-label">${tieneIns ? 'Total equipo + instalaci\u00f3n' : 'Total equipo'}</div>
+          <div class="total-ahorro">Ahorro total ${fmt(ahorroTotal)}</div>
+        </div>
+        <div class="total-price">${fmt(tieneIns ? total : p.tok)}</div>
+      </div>
+    </div>`;
+}
+
+function render() {
+  const q   = document.getElementById('buscar').value.toLowerCase().trim();
+  const cat = document.getElementById('fcat').value;
+  const niv = document.getElementById('fniv').value;
+
+  const filtered = PRODUCTOS.filter(p => {
+    if (q && !p.mod.toLowerCase().includes(q)) return false;
+    if (cat && p.cat !== cat) return false;
+    if (niv && p.niv !== niv) return false;
+    return true;
+  });
+
+  document.getElementById('result-count').textContent = filtered.length + ' producto' + (filtered.length !== 1 ? 's' : '');
+
+  const grid = document.getElementById('grid');
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="empty">
+      <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><path d="M8 11h6"/></svg>
+      <p>No se encontraron productos con ese criterio.</p></div>`;
+    return;
+  }
+  grid.innerHTML = filtered.map(buildCard).join('');
+}
+
+function renderNivelesRef() {
+  document.getElementById('niveles-ref').innerHTML = Object.entries(NIVELES).map(([key, n]) => {
+    const promo = Math.round(n.regular * 0.80);
+    return `<div class="nivel-card">
+      <div class="nivel-name">${key}</div>
+      <div class="nivel-desc">${n.desc}</div>
+      <div class="nivel-regular">${fmt(n.regular)}</div>
+      <div class="nivel-promo">${fmt(promo)}</div>
+      <div class="nivel-save">Ahorra ${fmt(n.regular - promo)}</div>
+    </div>`;
+  }).join('');
+}
+
+renderNivelesRef();
+render();
+</script>
+</body>
+</html>
